@@ -2,11 +2,13 @@ var startButton = document.getElementById('start-btn')
 var intro = document.getElementById('controls')
 var nextButton = document.getElementById('next-btn')
 var questionContainerElement = document.getElementById('question-container')
+var endGame = document.getElementById('end-game')
 
 var questionElement = document.getElementById('question')
 var answerButtonsElement = document.getElementById('answer-buttons')
 
-var timerText = document.getElementById('count')
+var timer = document.getElementById('timer')
+var count = 60;
 
 var shuffleQuestions, currentQuestionIndex 
 
@@ -19,6 +21,21 @@ nextButton.addEventListener('click', () => {
 function startGame() {
     startButton.classList.add('hide')
     intro.classList.add('hide')
+
+    var countdown = setInterval(function() {
+        count--;
+        timer.innerText = count;
+        if (count === 0) {
+            stopInterval()
+        }
+    },1000)
+
+    var stopInterval = function() {
+        clearInterval(countdown);
+        window.alert("You ran out of time! Try again.")
+        gameOver()
+    }
+
     shuffleQuestions = questions.sort(() => Math.random() - .5)
     currentQuestionIndex = 0
     questionContainerElement.classList.remove('hide')
@@ -28,7 +45,6 @@ function startGame() {
 function setNextQuestion() {
     resetState()
     showQuestion(shuffleQuestions[currentQuestionIndex])
-
 }
 
 function showQuestion(question) {
@@ -39,7 +55,7 @@ function showQuestion(question) {
         button.classList.add('btn')
         if (answer.correct) {
             button.dataset.correct = answer.correct
-        }
+        } 
         button.addEventListener('click', selectAnswer)
         answerButtonsElement.appendChild(button)
     })
@@ -61,8 +77,7 @@ function selectAnswer(e) {
     if(shuffleQuestions.length > currentQuestionIndex + 1) {
         nextButton.classList.remove('hide')
     } else {
-        startButton.innerText = 'Restart'
-        startButton.classList.remove('hide')
+       gameOver()
     }
 }
 
@@ -80,10 +95,10 @@ function clearStatusClass(element) {
     element.classList.remove('wrong')
 }
 
-
-
-
-
+var gameOver = function() {
+    endGame.classList.add('hide')
+    window.alert("Congrats your score is " + count + " Please refresh to try again.")
+}
 
 
 var questions = [
